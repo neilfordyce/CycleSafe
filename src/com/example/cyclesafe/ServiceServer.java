@@ -33,6 +33,8 @@ public class ServiceServer extends Service {
 		}
 	}
 
+	private final IBinder mBinder = new ServiceBinder(); 
+	
 	Location location; // location
 	double latitude; // latitude
 	double longitude; // longitude
@@ -45,8 +47,10 @@ public class ServiceServer extends Service {
 
 	// flag for GPS status
 	boolean canGetLocation = false;
+	
+	public Context mContext;
+	
 
-	private final Context mContext;
 
 	// Declaring a Location Manager
 	protected LocationManager locationManager;
@@ -58,19 +62,20 @@ public class ServiceServer extends Service {
 	// The minimum time between updates in milliseconds
 	private static final long MIN_TIME_BW_UPDATES = 1000 * 60 * 1; // 1 minute
 
-	public ServiceServer(Context context) {
-		mContext = context;
-	}
+	
 
 	@Override
-	public IBinder onBind(Intent intent) {
+	public IBinder onBind(Intent intent) 
+	{
 		return mBinder;
 	}
 	
-	private final IBinder mBinder = new ServiceBinder(); 
+	
 
-	@Override
-	public void onCreate() {
+	
+	public void onCreate() 
+	{
+		mContext = getApplicationContext();
 		Toast.makeText(this, "My Service Created", Toast.LENGTH_LONG).show();
 
 	}
@@ -87,30 +92,26 @@ public class ServiceServer extends Service {
 
 	}
 
-	public Location getLocation() {
-		try {
-			locationManager = (LocationManager) mContext
-					.getSystemService(LOCATION_SERVICE);
+	public Location getLocation()
+	{
+		try
+		{
+			locationManager = (LocationManager) mContext.getSystemService(LOCATION_SERVICE);
 
 			// getting GPS status
-			isGPSEnabled = locationManager
-					.isProviderEnabled(LocationManager.GPS_PROVIDER);
+			isGPSEnabled = locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER);
 
 			// getting network status
-			isNetworkEnabled = locationManager
-					.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
+			isNetworkEnabled = locationManager.isProviderEnabled(LocationManager.NETWORK_PROVIDER);
 
 			if (!isGPSEnabled && !isNetworkEnabled) {
 				// no network provider is enabled
 			} else {
 				this.canGetLocation = true;
 				// First get location from Network Provider
-				if (isNetworkEnabled) {
-					locationManager.requestLocationUpdates(
-							LocationManager.NETWORK_PROVIDER,
-							MIN_TIME_BW_UPDATES,
-							MIN_DISTANCE_CHANGE_FOR_UPDATES,
-							(LocationListener) this);
+				if (isNetworkEnabled) 
+				{
+					locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, MIN_TIME_BW_UPDATES,MIN_DISTANCE_CHANGE_FOR_UPDATES, (LocationListener) this);
 					Log.d("Network", "Network");
 					if (locationManager != null) {
 						location = locationManager
