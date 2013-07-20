@@ -1,6 +1,13 @@
 package com.example.cyclesafe;
 
+import java.io.ByteArrayInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+
 import android.app.Service;
+
 import android.content.Context;
 import android.content.Intent;
 import android.os.IBinder;
@@ -9,6 +16,14 @@ import android.widget.Toast;
 import android.location.Location;
 import android.location.LocationListener;
 import android.location.LocationManager;
+
+import org.apache.http.HttpResponse;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.params.BasicHttpParams;
+import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.params.HttpParams;
 
 public class ServiceServer extends Service 
 {
@@ -132,9 +147,42 @@ public class ServiceServer extends Service
 	 
 	        return location;
 	    }
+
+	 
+	public void postLocation(double latitude, double longitude, int id, int vehicleType){
+		// Set up the POST request
+		HttpPost postRequest = new HttpPost("http://ec2-50-18-26-146.us-west-1.compute.amazonaws.com:8080/");
+		
+		HttpParams params = new BasicHttpParams();
+		params.setDoubleParameter("lat", latitude);
+		params.setDoubleParameter("long", longitude);
+		params.setDoubleParameter("id", id);
+		params.setDoubleParameter("type", vehicleType);
+		postRequest.setParams(params);
+		
+		HttpConnectionParams.setConnectionTimeout(params, 20000);
+		HttpConnectionParams.setSoTimeout(params, 30000);
 	
+		try {
+			// Do the request
+			HttpClient client = new DefaultHttpClient();
+			HttpResponse response = client.execute(postRequest);
+			
+			// Close the stream
+			response.getEntity().getContent().close();
 	
+		} catch (FileNotFoundException ex) {
+			ex.printStackTrace();
+		} catch (IOException ioe) {
+			ioe.printStackTrace();
+		} catch(Exception e){  //TODO Remove Pokemon
+			e.printStackTrace();
+		}
+	}
 	
+	public void getCyclists(){
+		
+	}
 	
 	
 }
