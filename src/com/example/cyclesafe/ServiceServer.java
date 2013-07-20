@@ -305,7 +305,7 @@ public class ServiceServer extends Service implements LocationListener
         Type proximityListType = new TypeToken<ArrayList<Proximity>>(){}.getType();
         
 		HttpGet getRequest = new HttpGet(
-                "http://ec2-50-18-26-146.us-west-1.compute.amazonaws.com:8080/?id" + lorryId);
+                "http://ec2-50-18-26-146.us-west-1.compute.amazonaws.com:8080/?id=" + lorryId);
         
         try {           
             HttpClient client = new DefaultHttpClient();
