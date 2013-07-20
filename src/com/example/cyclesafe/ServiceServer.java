@@ -236,8 +236,9 @@ public class ServiceServer extends Service implements LocationListener
 	    {
 	    	latitude = location.getLatitude();
 	    	longitude = location.getLongitude();
+	    	
 	    	toastLocation();
-	    	postLocation(latitude, longitude, 1234, 0);
+	    	postLocation(latitude, longitude, 5432, 0);
 	    }
 
 	    @Override
