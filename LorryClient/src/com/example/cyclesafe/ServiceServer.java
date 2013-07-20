@@ -62,7 +62,7 @@ public class ServiceServer extends Service implements LocationListener
 	
 	private static final int BIKE_TYPE = 0;
 	private static final int LORRY_TYPE = 1;
-	
+
 	// Minimum distance to travel before an update ( metres )
 	private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
 																
@@ -238,13 +238,8 @@ public class ServiceServer extends Service implements LocationListener
 	    {
 	    	latitude = location.getLatitude();
 	    	longitude = location.getLongitude();
-	    	
 	    	toastLocation();
-<<<<<<< HEAD
-	    	postLocation(latitude, longitude, 5432, 0);
-=======
-	    	postLocation(latitude, longitude, 1234, BIKE_TYPE);
->>>>>>> 057ac21a9127158e1a71defb04a01e9c691c263a
+	    	postLocation(latitude, longitude, 1234, LORRY_TYPE);
 	    }
 
 	    @Override
@@ -311,7 +306,6 @@ public class ServiceServer extends Service implements LocationListener
 		
         Type proximityListType = new TypeToken<ArrayList<Proximity>>(){}.getType();
         
-       
 		HttpGet getRequest = new HttpGet(
                 "http://ec2-50-18-26-146.us-west-1.compute.amazonaws.com:8080/?id=" + lorryId);
         

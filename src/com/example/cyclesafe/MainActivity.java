@@ -1,6 +1,5 @@
 package com.example.cyclesafe;
 
-//test comments
 import android.os.Bundle;
 import android.app.Activity;
 import android.content.Intent;
@@ -24,7 +23,7 @@ public class MainActivity extends Activity implements OnClickListener {
         
         start = (Button) findViewById(R.id.btn_LetsRide);
         start.setOnClickListener(this);
-        riding=false;
+        riding = false;
         
         gpsService = new Intent(getApplicationContext(), ServiceServer.class);
         
@@ -40,30 +39,28 @@ public class MainActivity extends Activity implements OnClickListener {
 
 
 	@Override
-	public void onClick(View arg0) {
+	public void onClick(View view) {
 		// TODO Auto-generated method stub
-		switch (arg0.getId()){
+		switch (view.getId())
+		{
 
 		case R.id.btn_LetsRide:
-			
-		 
-		 
-		 if(riding==false)
-		 {
-			 //start gps yo
-			 riding =true;
-			 startService(gpsService);
-			 start.setBackgroundResource(R.drawable.custom_button_stop);
-			 start.setText("FINISHED RIDING");
-		 }
-		 else if (riding ==true)
-		 {
-			 //end gps yo
-			 riding = false;
-			 start.setBackgroundResource(R.drawable.custom_button_start);
-			 start.setText("LET'S RIDE");
-		 }
-		break;
+			 if(riding == false)
+			 {
+				 //start gps yo
+				 riding = true;
+				 startService(gpsService);
+				 start.setBackgroundResource(R.drawable.custom_button_stop);
+				 start.setText(R.string.finishRiding);
+			 }
+			 else if (riding ==true)
+			 {
+				 //end gps yo
+				 riding = false;
+				 start.setBackgroundResource(R.drawable.custom_button_start);
+				 start.setText(R.string.letsRide);
+			 }
+			 break;
 		}
 		
 	}
