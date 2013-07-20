@@ -244,27 +244,19 @@ public class ServiceServer extends Service implements LocationListener
 	public void onCreate() 
 	{
 		mContext = getApplicationContext();
-		
 		getLocation();
-		Toast.makeText(this, "Location: " + latitude + " , " + longitude, Toast.LENGTH_LONG).show();
 	}
 
 
 	@Override
 	public void onDestroy() 
 	{
-		Toast.makeText(this, "My Service Stopped", Toast.LENGTH_LONG).show();
-
 	}
 
 	@Override
-	public void onStart(Intent intent, int startid) {
-		Toast.makeText(this, "My Service Started", Toast.LENGTH_LONG).show();
-
+	public void onStart(Intent intent, int startid) 
+	{
 	}
-
-	
-	
 
 	
 

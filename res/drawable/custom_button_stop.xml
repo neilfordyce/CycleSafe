@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
-   
     <item android:state_pressed="true" >
         <shape>
             <solid
@@ -23,8 +22,8 @@
     <item>
         <shape>
             <gradient
-                android:startColor="#147008"
-                android:endColor="#2EFF12"
+                android:startColor="#FF2A00"
+                android:endColor="#540D00"
                 android:angle="270" />
             <stroke
                 android:width="5dp"
