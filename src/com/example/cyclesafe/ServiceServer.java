@@ -2,6 +2,10 @@ package com.example.cyclesafe;
 
 import java.io.FileNotFoundException;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.lang.reflect.Type;
+import java.util.ArrayList;
+import java.util.List;
 
 
 import android.app.AlertDialog;
@@ -21,11 +25,17 @@ import android.location.LocationListener;
 import android.location.LocationManager;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpConnectionParams;
 import org.apache.http.params.HttpParams;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 public class ServiceServer extends Service implements LocationListener
 {
@@ -263,43 +273,54 @@ public class ServiceServer extends Service implements LocationListener
 	{
 	}
 
-	
-
 	public void postLocation(double latitude, double longitude, int id,
 			int vehicleType) {
-		// Set up the POST request
-		HttpPost postRequest = new HttpPost(
-				"http://ec2-50-18-26-146.us-west-1.compute.amazonaws.com:8080/");
-
-		HttpParams params = new BasicHttpParams();
-		params.setDoubleParameter("lat", latitude);
-		params.setDoubleParameter("long", longitude);
-		params.setDoubleParameter("id", id);
-		params.setDoubleParameter("type", vehicleType);
-		postRequest.setParams(params);
-
-		HttpConnectionParams.setConnectionTimeout(params, 20000);
-		HttpConnectionParams.setSoTimeout(params, 30000);
-
-		try {
-			// Do the request
-			HttpClient client = new DefaultHttpClient();
-			HttpResponse response = client.execute(postRequest);
-
-			// Close the stream
-			response.getEntity().getContent().close();
-
-		} catch (FileNotFoundException ex) {
-			ex.printStackTrace();
-		} catch (IOException ioe) {
-			ioe.printStackTrace();
-		} catch (Exception e) { // TODO Remove Pokemon
-			e.printStackTrace();
-		}
+        // Set up the POST request
+        HttpPost postRequest = new HttpPost(
+                "http://ec2-50-18-26-146.us-west-1.compute.amazonaws.com:8080/");
+        
+        //Add the params
+        List<BasicNameValuePair> postParams = new ArrayList<BasicNameValuePair>();
+        postParams.add(new BasicNameValuePair("type", String.valueOf(vehicleType)));
+        postParams.add(new BasicNameValuePair("id", String.valueOf(id)));
+        postParams.add(new BasicNameValuePair("long", String.valueOf(longitude)));
+        postParams.add(new BasicNameValuePair("lat", String.valueOf(latitude)));
+        
+        try {
+            UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(postParams);
+            postRequest.setEntity(formEntity);
+            
+            HttpClient client = new DefaultHttpClient();
+            HttpResponse response = client.execute(postRequest);
+        } catch (IOException e) {
+        	e.printStackTrace();
+        } catch (Exception e) { 
+        	e.printStackTrace();
+        }
 	}
-
-	public void getCyclists() {
-
+	
+	public List<Proximity> getCyclists(int lorryId) {
+        Gson gson = new Gson();
+		
+        Type proximityListType = new TypeToken<ArrayList<Proximity>>(){}.getType();
+        
+		HttpGet getRequest = new HttpGet(
+                "http://ec2-50-18-26-146.us-west-1.compute.amazonaws.com:8080/?id" + lorryId);
+        
+        try {           
+            HttpClient client = new DefaultHttpClient();
+            HttpResponse response = client.execute(getRequest);
+            
+    		InputStreamReader isr = new InputStreamReader(response.getEntity().getContent());
+    		List<Proximity> cyclists = gson.fromJson(isr, proximityListType);
+            
+            return cyclists;
+        } catch (IOException e) {
+        	e.printStackTrace();
+        } catch (Exception e) { 
+        	e.printStackTrace();
+        }
+        
+        return null;
 	}
-
 }
