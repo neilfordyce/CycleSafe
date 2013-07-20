@@ -62,7 +62,7 @@ public class ServiceServer extends Service implements LocationListener
 	
 	private static final int BIKE_TYPE = 0;
 	private static final int LORRY_TYPE = 1;
-	
+
 	// Minimum distance to travel before an update ( metres )
 	private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
 																
@@ -239,7 +239,7 @@ public class ServiceServer extends Service implements LocationListener
 	    	latitude = location.getLatitude();
 	    	longitude = location.getLongitude();
 	    	toastLocation();
-	    	postLocation(latitude, longitude, 1234, BIKE_TYPE);
+	    	postLocation(latitude, longitude, 1234, LORRY_TYPE);
 	    }
 
 	    @Override

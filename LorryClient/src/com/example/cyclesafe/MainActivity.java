@@ -7,12 +7,13 @@ import android.view.Menu;
 import android.view.View;
 import android.widget.Button;
 
+
 public class MainActivity extends Activity 
 {
 	Button startButton;
 	boolean trucking;
 	
-	ServerService serverService;
+	ServiceServer serverService;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -48,7 +49,6 @@ public class MainActivity extends Activity
 			}
 		});
         
-        gpsService = new Intent(getApplicationContext(), );
 	}
 
 
