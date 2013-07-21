@@ -12,8 +12,11 @@ import java.util.logging.Logger;
 
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
 
 import android.os.Bundle;
 import android.provider.Settings.Secure;
@@ -44,6 +47,8 @@ public class LorryMapActivity extends Activity
 	private ImageView imageNotification;
 	private Timer proximityTimer;
 	
+	private static final int LORRY_TYPE = 1;
+	
 	private String android_id;
 		
 	@Override
@@ -72,7 +77,9 @@ public class LorryMapActivity extends Activity
 					double latitude = location.getLatitude();
 					double longitude = location.getLongitude();
 					LatLng latLng = new LatLng(latitude, longitude);
-					map.moveCamera(CameraUpdateFactory.newLatLng(latLng));			
+					map.moveCamera(CameraUpdateFactory.newLatLng(latLng));	
+					map.moveCamera(CameraUpdateFactory.zoomBy(MAX_ZOOM));				
+					postLocation(latitude, longitude, android_id, LORRY_TYPE);
 				}
 			});
 		}
@@ -170,5 +177,32 @@ public class LorryMapActivity extends Activity
 		super.onPause();
 //		myLocation.disableMyLocation();
 	}
+	
+	public void postLocation(double latitude, double longitude, String id,
+			int vehicleType) {
+        // Set up the POST request
+        HttpPost postRequest = new HttpPost(
+                "http://ec2-50-18-26-146.us-west-1.compute.amazonaws.com:8080/");
+        
+        //Add the params
+        List<BasicNameValuePair> postParams = new ArrayList<BasicNameValuePair>();
+        postParams.add(new BasicNameValuePair("type", String.valueOf(vehicleType)));
+        postParams.add(new BasicNameValuePair("id", id));
+        postParams.add(new BasicNameValuePair("long", String.valueOf(longitude)));
+        postParams.add(new BasicNameValuePair("lat", String.valueOf(latitude)));
+        
+        try {
+            UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(postParams);
+            postRequest.setEntity(formEntity);
+            
+            HttpClient client = new DefaultHttpClient();
+            HttpResponse response = client.execute(postRequest);
+        } catch (IOException e) {
+        	e.printStackTrace();
+        } catch (Exception e) { 
+        	e.printStackTrace();
+        }
+	}
+
 	
 }
