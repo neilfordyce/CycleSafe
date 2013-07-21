@@ -138,8 +138,10 @@ public class LorryMapActivity extends Activity
 					double longitude = nearByCyclists.get(i).getLongitude();
 					double distance = nearByCyclists.get(i).getDistance();
 					
-					Log.v("cycle: ", "" + distance);
-					
+					Log.v("cycle lat: ", "" + latitude);
+					Log.v("cycle long: ", "" + longitude);
+					Log.v("cycle distance: ", "" + distance);
+									
 					map.addMarker(new MarkerOptions()
 			        	.position(new LatLng(latitude, longitude))
 			        	.title(String.valueOf(distance)));
