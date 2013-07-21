@@ -18,6 +18,7 @@ import android.os.Binder;
 import android.os.Bundle;
 import android.os.IBinder;
 import android.provider.Settings;
+import android.provider.Settings.Secure;
 import android.util.Log;
 import android.widget.Toast;
 import android.location.Location;
@@ -62,6 +63,9 @@ public class ServiceServer extends Service implements LocationListener
 	
 	private static final int BIKE_TYPE = 0;
 	private static final int LORRY_TYPE = 1;
+	
+	//Unique ID for android user
+	private String android_id = "";
 	
 	// Minimum distance to travel before an update ( metres )
 	private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
@@ -238,8 +242,10 @@ public class ServiceServer extends Service implements LocationListener
 	    {
 	    	latitude = location.getLatitude();
 	    	longitude = location.getLongitude();
+	    	
 	    	toastLocation();
-	    	postLocation(latitude, longitude, 1234, BIKE_TYPE);
+
+	    	postLocation(latitude, longitude, android_id, BIKE_TYPE);
 	    }
 
 	    @Override
@@ -260,8 +266,10 @@ public class ServiceServer extends Service implements LocationListener
 
 	public void onCreate() 
 	{
-		mContext = getApplicationContext();
-		getLocation();
+	    mContext = getApplicationContext();
+		
+        android_id = Secure.getString(mContext.getContentResolver(), Secure.ANDROID_ID); 
+        getLocation();
 	}
 
 
@@ -275,7 +283,7 @@ public class ServiceServer extends Service implements LocationListener
 	{
 	}
 
-	public void postLocation(double latitude, double longitude, int id,
+	public void postLocation(double latitude, double longitude, String id,
 			int vehicleType) {
         // Set up the POST request
         HttpPost postRequest = new HttpPost(
@@ -284,7 +292,7 @@ public class ServiceServer extends Service implements LocationListener
         //Add the params
         List<BasicNameValuePair> postParams = new ArrayList<BasicNameValuePair>();
         postParams.add(new BasicNameValuePair("type", String.valueOf(vehicleType)));
-        postParams.add(new BasicNameValuePair("id", String.valueOf(id)));
+        postParams.add(new BasicNameValuePair("id", id));
         postParams.add(new BasicNameValuePair("long", String.valueOf(longitude)));
         postParams.add(new BasicNameValuePair("lat", String.valueOf(latitude)));
         
@@ -306,6 +314,7 @@ public class ServiceServer extends Service implements LocationListener
 		
         Type proximityListType = new TypeToken<ArrayList<Proximity>>(){}.getType();
         
+       
 		HttpGet getRequest = new HttpGet(
                 "http://ec2-50-18-26-146.us-west-1.compute.amazonaws.com:8080/?id=" + lorryId);
         
