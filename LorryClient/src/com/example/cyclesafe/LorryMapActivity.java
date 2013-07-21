@@ -57,6 +57,9 @@ public class LorryMapActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lorry_map_activity);
 		
+		// Unique device ID to recognise Lorry client
+        android_id = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID); 
+		
 		// Setup Google Map Fragment
 		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
 		if (map != null)
@@ -84,8 +87,6 @@ public class LorryMapActivity extends Activity
 			});
 		}
 		
-		// Unique device ID to recognise Lorry client
-        android_id = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID); 
 		
 		// Get UI Elements
 		//imageNotification = (ImageView) findViewById(R.id.image);
