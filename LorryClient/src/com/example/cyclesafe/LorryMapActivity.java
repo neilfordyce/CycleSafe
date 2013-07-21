@@ -95,7 +95,7 @@ public class LorryMapActivity extends Activity
 					double latitude = (Double) cyclistData.get("latitude");
 					double longitude = (Double) cyclistData.get("longitude");
 					double distance = (Double) cyclistData.get("distance");
-					
+					map.clear();
 					map.addMarker(new MarkerOptions()
 			        .position(new LatLng(latitude, longitude))
 			        .title("Distance: " + distance));
