@@ -277,6 +277,7 @@ public class ServiceServer extends Service implements LocationListener
 	public void onDestroy() 
 	{
         deleteCyclist(android_id);
+        locationManager.removeUpdates(this);
 	}
 
 	@Override
