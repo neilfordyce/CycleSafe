@@ -20,7 +20,9 @@ import org.apache.http.message.BasicNameValuePair;
 
 import android.os.Bundle;
 import android.provider.Settings.Secure;
+import android.util.Log;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import android.app.Activity;
 import android.location.*;
@@ -51,6 +53,13 @@ public class LorryMapActivity extends Activity
 	
 	private String android_id;
 		
+	
+	
+	public void doToast()
+	{
+		Toast.makeText(this, "dkjhgkdjn", Toast.LENGTH_LONG).show();
+	}
+	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
 	{
@@ -62,6 +71,7 @@ public class LorryMapActivity extends Activity
 		
 		// Setup Google Map Fragment
 		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
+	
 		if (map != null)
 		{
 			GoogleMapOptions options = new GoogleMapOptions();
@@ -71,11 +81,18 @@ public class LorryMapActivity extends Activity
 			    .tiltGesturesEnabled(false);
 			map.setIndoorEnabled(true);
 			map.setMyLocationEnabled(true);
+			
+			
+			//Location initialLocation = map.getMyLocation();
+			
+			postLocation(51.504658, -0.024534, android_id, LORRY_TYPE);
 			map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() 
 			{
 				@Override
 				public void onMyLocationChange(Location location) 
 				{
+				    
+				       
 					// Update camera to my location
 					double latitude = location.getLatitude();
 					double longitude = location.getLongitude();
@@ -86,6 +103,9 @@ public class LorryMapActivity extends Activity
 				}
 			});
 		}
+		
+		
+		
 		
 		
 		// Get UI Elements
@@ -117,6 +137,8 @@ public class LorryMapActivity extends Activity
 					double latitude = nearByCyclists.get(i).getLatitude();
 					double longitude = nearByCyclists.get(i).getLongitude();
 					double distance = nearByCyclists.get(i).getDistance();
+					
+					Log.v("cycle: ", "" + distance);
 					
 					map.addMarker(new MarkerOptions()
 			        	.position(new LatLng(latitude, longitude))
@@ -185,27 +207,66 @@ public class LorryMapActivity extends Activity
 	public void postLocation(double latitude, double longitude, String id,
 			int vehicleType) {
         // Set up the POST request
-        HttpPost postRequest = new HttpPost(
-                "http://ec2-50-18-26-146.us-west-1.compute.amazonaws.com:8080/");
         
-        //Add the params
-        List<BasicNameValuePair> postParams = new ArrayList<BasicNameValuePair>();
-        postParams.add(new BasicNameValuePair("type", String.valueOf(vehicleType)));
-        postParams.add(new BasicNameValuePair("id", id));
-        postParams.add(new BasicNameValuePair("long", String.valueOf(longitude)));
-        postParams.add(new BasicNameValuePair("lat", String.valueOf(latitude)));
-        
-        try {
-            UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(postParams);
-            postRequest.setEntity(formEntity);
+
+
+            class PostThread implements Runnable 
+            {
+            	double latitude;
+            	double longitude;
+            	String id;
+    			int vehicleType;
+    			
+    			PostThread(double latitude, double longitude, String id,
+    					int vehicleType)
+				{
+    				this.latitude = latitude;
+    				this.longitude = longitude;
+    				this.id = id;
+    				this.vehicleType = vehicleType;
+				}
+    			
+    			@Override
+            	public void run()
+            	{
+    		        try {
+    		        	
+	                    HttpPost postRequest = new HttpPost(
+	                            "http://ec2-50-18-26-146.us-west-1.compute.amazonaws.com:8080/");
+	                    
+	                   
+	           
+	                    
+	                    //Add the params
+	                    List<BasicNameValuePair> postParams = new ArrayList<BasicNameValuePair>();
+	                    postParams.add(new BasicNameValuePair("type", String.valueOf(vehicleType)));
+	                    postParams.add(new BasicNameValuePair("id", id));
+	                    postParams.add(new BasicNameValuePair("long", String.valueOf(longitude)));
+	                    postParams.add(new BasicNameValuePair("lat", String.valueOf(latitude)));
+	
+	                    
+	                    UrlEncodedFormEntity formEntity = new UrlEncodedFormEntity(postParams);
+	                    postRequest.setEntity(formEntity);
+	                   
+	                    HttpClient client = new DefaultHttpClient();
+	
+	                    HttpResponse response = client.execute(postRequest);
+	                    
+	                   response.getEntity().getContent().close();
+	                   
+	            	} catch (IOException e) {
+	                	Log.v("errorHTPP: ","hi",  e);
+	                } catch (Exception e) { 
+	                	Log.v("errorHTPP: ", e.getClass().getName(),  e);
+	                }
+            	}
+            }
             
-            HttpClient client = new DefaultHttpClient();
-            HttpResponse response = client.execute(postRequest);
-        } catch (IOException e) {
-        	e.printStackTrace();
-        } catch (Exception e) { 
-        	e.printStackTrace();
-        }
+            Thread thread = new Thread(new PostThread(latitude, longitude, id, vehicleType));
+            thread.start();
+   
+
+        
 	}
 
 	
