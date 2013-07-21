@@ -47,6 +47,8 @@ public class LorryMapActivity extends Activity
 	private ImageView imageNotification;
 	private Timer proximityTimer;
 	
+	private static final int LORRY_TYPE = 1;
+	
 	private String android_id;
 		
 	@Override
@@ -54,6 +56,9 @@ public class LorryMapActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lorry_map_activity);
+		
+		// Unique device ID to recognise Lorry client
+        android_id = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID); 
 		
 		// Setup Google Map Fragment
 		map = ((MapFragment) getFragmentManager().findFragmentById(R.id.map)).getMap();
@@ -75,16 +80,13 @@ public class LorryMapActivity extends Activity
 					double latitude = location.getLatitude();
 					double longitude = location.getLongitude();
 					LatLng latLng = new LatLng(latitude, longitude);
-					map.moveCamera(CameraUpdateFactory.newLatLng(latLng));			
-					
-					// Post to server
-					
+					map.moveCamera(CameraUpdateFactory.newLatLng(latLng));	
+					map.moveCamera(CameraUpdateFactory.zoomBy(MAX_ZOOM));				
+					postLocation(latitude, longitude, android_id, LORRY_TYPE);
 				}
 			});
 		}
 		
-		// Unique device ID to recognise Lorry client
-        android_id = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID); 
 		
 		// Get UI Elements
 		//imageNotification = (ImageView) findViewById(R.id.image);
@@ -106,9 +108,6 @@ public class LorryMapActivity extends Activity
 			{
 				List<Proximity> nearByCyclists = getCyclists(android_id);
 				
-				if (nearByCyclists == null)
-					return;
-					
 				// Update map with nearby cyclists
 				for (int i = 0; i < nearByCyclists.size(); i++)
 				{
@@ -160,6 +159,26 @@ public class LorryMapActivity extends Activity
         return null;
 	}
 	
+	@Override
+	public void onResume()
+	{
+		// Get my location
+		super.onResume();
+//		myLocation.enableMyLocation();
+//		myLocation.runOnFirstFix(new Runnable() {
+//			public void run() {
+//				map.getController().setCenter(myLocation.getMyLocation());
+//			}
+//		});
+	}
+	
+	@Override 
+	public void onPause()
+	{
+		super.onPause();
+//		myLocation.disableMyLocation();
+	}
+	
 	public void postLocation(double latitude, double longitude, String id,
 			int vehicleType) {
         // Set up the POST request
@@ -186,25 +205,5 @@ public class LorryMapActivity extends Activity
         }
 	}
 
-	
-	@Override
-	public void onResume()
-	{
-		// Get my location
-		super.onResume();
-//		myLocation.enableMyLocation();
-//		myLocation.runOnFirstFix(new Runnable() {
-//			public void run() {
-//				map.getController().setCenter(myLocation.getMyLocation());
-//			}
-//		});
-	}
-	
-	@Override 
-	public void onPause()
-	{
-		super.onPause();
-//		myLocation.disableMyLocation();
-	}
 	
 }
