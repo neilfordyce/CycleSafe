@@ -276,6 +276,7 @@ public class ServiceServer extends Service implements LocationListener
 	@Override
 	public void onDestroy() 
 	{
+		super.onDestroy();
         deleteCyclist(android_id);
         locationManager.removeUpdates(this);
 	}
@@ -283,6 +284,7 @@ public class ServiceServer extends Service implements LocationListener
 	@Override
 	public void onStart(Intent intent, int startid) 
 	{
+		super.onStart(intent, startId);
 	}
 
 	public void postLocation(double latitude, double longitude, String id,
