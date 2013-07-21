@@ -44,6 +44,7 @@ public class LorryMapActivity extends Activity
 {
 
 	private static Handler uiMarkerHandler;
+	private static Handler clearMapHandler;
 	private static final int MAX_ZOOM = 21;
 	private static final int TIMER_DELAY = 5000; // 5s
 	
@@ -103,9 +104,19 @@ public class LorryMapActivity extends Activity
 
 			};
 			
+			clearMapHandler = new Handler() 
+			{
+				@Override
+				public void handleMessage(Message msg) 
+				{
+					map.clear();
+				}
+
+			};
 			//Location initialLocation = map.getMyLocation();
 			
 			postLocation(51.504658, -0.024534, android_id, LORRY_TYPE);
+			map.moveCamera(CameraUpdateFactory.zoomBy(MAX_ZOOM - 4));	
 			map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() 
 			{
 				@Override
@@ -117,8 +128,7 @@ public class LorryMapActivity extends Activity
 					double latitude = location.getLatitude();
 					double longitude = location.getLongitude();
 					LatLng latLng = new LatLng(latitude, longitude);
-					map.moveCamera(CameraUpdateFactory.newLatLng(latLng));	
-					map.moveCamera(CameraUpdateFactory.zoomBy(MAX_ZOOM));				
+					map.moveCamera(CameraUpdateFactory.newLatLng(latLng));				
 					postLocation(latitude, longitude, android_id, LORRY_TYPE);
 				}
 			});
@@ -146,6 +156,10 @@ public class LorryMapActivity extends Activity
 				
 				if (nearByCyclists == null)
 					return;
+				
+				// Clear map of cyclists
+				if (nearByCyclists.size() == 0)
+					clearMapHandler.sendEmptyMessage(0);
 				
 				// Update map with nearby cyclists
 				for (int i = 0; i < nearByCyclists.size(); i++)
