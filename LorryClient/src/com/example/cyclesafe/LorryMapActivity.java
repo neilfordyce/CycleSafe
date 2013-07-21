@@ -100,14 +100,14 @@ public class LorryMapActivity extends Activity
 			{
 				List<Proximity> nearByCyclists = getCyclists(android_id);
 				
+				map.clear();
+				
 				// Update map with nearby cyclists
 				for (int i = 0; i < nearByCyclists.size(); i++)
 				{
 					double latitude = nearByCyclists.get(i).getLatitude();
 					double longitude = nearByCyclists.get(i).getLongitude();
 					double distance = nearByCyclists.get(i).getDistance();
-					
-					map.clear();
 					
 					map.addMarker(new MarkerOptions()
 			        	.position(new LatLng(latitude, longitude))
