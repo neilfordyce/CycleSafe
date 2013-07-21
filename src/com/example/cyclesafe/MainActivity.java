@@ -47,6 +47,7 @@ public class MainActivity extends Activity implements OnClickListener {
 		case R.id.btn_LetsRide:
 			 if(riding == false)
 			 {
+				 
 				 //start gps yo
 				 riding = true;
 				 startService(gpsService);
@@ -59,6 +60,7 @@ public class MainActivity extends Activity implements OnClickListener {
 				 riding = false;
 				 start.setBackgroundResource(R.drawable.custom_button_start);
 				 start.setText(R.string.letsRide);
+				 stopService(gpsService);
 			 }
 			 break;
 		}

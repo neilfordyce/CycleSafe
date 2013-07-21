@@ -27,6 +27,7 @@ import android.location.LocationManager;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.impl.client.DefaultHttpClient;
@@ -271,12 +272,11 @@ public class ServiceServer extends Service implements LocationListener
         android_id = Secure.getString(mContext.getContentResolver(), Secure.ANDROID_ID); 
         getLocation();
 	}
-
-
+	
 	@Override
 	public void onDestroy() 
 	{
-		
+        deleteCyclist(android_id);
 	}
 
 	@Override
@@ -303,6 +303,20 @@ public class ServiceServer extends Service implements LocationListener
             
             HttpClient client = new DefaultHttpClient();
             HttpResponse response = client.execute(postRequest);
+        } catch (IOException e) {
+        	e.printStackTrace();
+        } catch (Exception e) { 
+        	e.printStackTrace();
+        }
+	}
+	
+	public void deleteCyclist(String id){
+		HttpDelete delRequest = new HttpDelete(
+                "http://ec2-50-18-26-146.us-west-1.compute.amazonaws.com:8080/" + id);
+		
+        try {
+            HttpClient client = new DefaultHttpClient();
+            HttpResponse response = client.execute(delRequest);
         } catch (IOException e) {
         	e.printStackTrace();
         } catch (Exception e) { 
