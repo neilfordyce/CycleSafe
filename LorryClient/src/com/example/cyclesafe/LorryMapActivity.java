@@ -19,6 +19,8 @@ import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.message.BasicNameValuePair;
 
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.Message;
 import android.provider.Settings.Secure;
 import android.util.Log;
 import android.widget.ImageView;
@@ -41,6 +43,7 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class LorryMapActivity extends Activity 
 {
 
+	private static Handler uiMarkerHandler;
 	private static final int MAX_ZOOM = 21;
 	private static final int TIMER_DELAY = 5000; // 5s
 	
@@ -83,6 +86,23 @@ public class LorryMapActivity extends Activity
 			map.setMyLocationEnabled(true);
 			
 			
+			uiMarkerHandler = new Handler() 
+			{
+				@Override
+				public void handleMessage(Message msg) 
+				{
+					Bundle cyclistData = msg.getData();
+					double latitude = (Double) cyclistData.get("latitude");
+					double longitude = (Double) cyclistData.get("longitude");
+					double distance = (Double) cyclistData.get("distance");
+					
+					map.addMarker(new MarkerOptions()
+			        .position(new LatLng(latitude, longitude))
+			        .title("Distance: " + distance));
+				}
+
+			};
+			
 			//Location initialLocation = map.getMyLocation();
 			
 			postLocation(51.504658, -0.024534, android_id, LORRY_TYPE);
@@ -103,10 +123,6 @@ public class LorryMapActivity extends Activity
 				}
 			});
 		}
-		
-		
-		
-		
 		
 		// Get UI Elements
 		//imageNotification = (ImageView) findViewById(R.id.image);
@@ -138,14 +154,15 @@ public class LorryMapActivity extends Activity
 					double longitude = nearByCyclists.get(i).getLongitude();
 					double distance = nearByCyclists.get(i).getDistance();
 					
-					Log.v("cycle lat: ", "" + latitude);
-					Log.v("cycle long: ", "" + longitude);
-					Log.v("cycle distance: ", "" + distance);
-									
-					map.addMarker(new MarkerOptions()
-			        	.position(new LatLng(latitude, longitude))
-			        	.title(String.valueOf(distance)));
-						
+					Log.v("cycle: ", "" + distance);
+					Message cyclistMessage = new Message();
+					Bundle cyclistData = new Bundle();
+					cyclistData.putDouble("latitude", latitude);
+					cyclistData.putDouble("longitude", longitude);
+					cyclistData.putDouble("distance", distance);
+					cyclistMessage.setData(cyclistData);
+					uiMarkerHandler.sendMessage(cyclistMessage);	
+					
 					Logger.getLogger("").log(Level.INFO, "Nearby Cyclist: {0}, {1}", new Object[]{latitude, longitude});
 				}
 			}
@@ -153,6 +170,8 @@ public class LorryMapActivity extends Activity
 		
 		proximityTimer.scheduleAtFixedRate(task, 0, TIMER_DELAY);
 	}
+	
+	
 
 	/**
 	 * Performs HTTP GET Request to server.  
@@ -267,7 +286,7 @@ public class LorryMapActivity extends Activity
             Thread thread = new Thread(new PostThread(latitude, longitude, id, vehicleType));
             thread.start();
    
-
+            
         
 	}
 
