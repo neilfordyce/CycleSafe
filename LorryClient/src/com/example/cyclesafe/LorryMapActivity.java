@@ -108,6 +108,9 @@ public class LorryMapActivity extends Activity
 			{
 				List<Proximity> nearByCyclists = getCyclists(android_id);
 				
+				if (nearByCyclists == null)
+					return;
+				
 				// Update map with nearby cyclists
 				for (int i = 0; i < nearByCyclists.size(); i++)
 				{
