@@ -22,16 +22,26 @@ public class Proximity
     private double distance;
     private double latitude;
     private double longitude;
+    private String id;
 //    private DIRECTION direction;
     
-    public Proximity(double distance, double lat, double lng)
+    public Proximity(double distance, double lat, double lng, String id)
     {
         this.distance = distance;
         this.latitude = lat;
         this.longitude = lng;
+        this.id = id;
 //        this.direction = direction;
     }
 
+    public String getId() {
+    	return id;
+    }
+    
+    public void setId(String id) {
+    	this.id = id;
+    }
+    
     public double getDistance() {
         return distance;
     }
