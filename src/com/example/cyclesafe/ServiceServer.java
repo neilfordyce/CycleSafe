@@ -68,10 +68,10 @@ public class ServiceServer extends Service implements LocationListener
 	private String android_id = "";
 	
 	// Minimum distance to travel before an update ( metres )
-	private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 10;
+	private static final long MIN_DISTANCE_CHANGE_FOR_UPDATES = 0;
 																
 	// The minimum time between updates in milliseconds
-	private static final long MIN_TIME_BW_UPDATES = 1000 * 5 * 1; //5 seconds
+	private static final long MIN_TIME_BW_UPDATES = 3000; //3 seconds
 
 	public void toastLocation()
 	{
@@ -276,6 +276,7 @@ public class ServiceServer extends Service implements LocationListener
 	@Override
 	public void onDestroy() 
 	{
+		
 	}
 
 	@Override
