@@ -28,6 +28,8 @@ import android.widget.Toast;
 
 import android.app.Activity;
 import android.location.*;
+import android.media.AudioManager;
+import android.media.SoundPool;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
@@ -43,16 +45,22 @@ import com.google.android.gms.maps.model.MarkerOptions;
 public class LorryMapActivity extends Activity 
 {
 
-	private static Handler uiMarkerHandler;
+	private static final int LORRY_TYPE = 1;
 	private static final int MAX_ZOOM = 21;
-	private static final int TIMER_DELAY = 5000; // 5s
+	private static final int TIMER_DELAY = 3000; // 5s
 	
+	private static SoundPool sounds;
+    private static int bikeBell;
+    private int oldNumCyclists = 0;
+
+    private static Handler uiMarkerHandler;
+	private static Handler clearMapHandler;
+    
 	private GoogleMap map;
 	//private MapView map;
 	private ImageView imageNotification;
 	private Timer proximityTimer;
 	
-	private static final int LORRY_TYPE = 1;
 	
 	private String android_id;
 		
@@ -68,6 +76,10 @@ public class LorryMapActivity extends Activity
 	{
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.lorry_map_activity);
+		
+		 sounds = new SoundPool(1, AudioManager.STREAM_MUSIC, 0);
+	     // Load sound
+	     bikeBell = sounds.load(this, R.raw.bikebell, 1);
 		
 		// Unique device ID to recognise Lorry client
         android_id = Secure.getString(this.getContentResolver(), Secure.ANDROID_ID); 
@@ -103,9 +115,19 @@ public class LorryMapActivity extends Activity
 
 			};
 			
+			clearMapHandler = new Handler() 
+			{
+				@Override
+				public void handleMessage(Message msg) 
+				{
+					map.clear();
+				}
+
+			};
 			//Location initialLocation = map.getMyLocation();
 			
 			postLocation(51.504658, -0.024534, android_id, LORRY_TYPE);
+			map.moveCamera(CameraUpdateFactory.zoomBy(MAX_ZOOM - 4));	
 			map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() 
 			{
 				@Override
@@ -117,8 +139,7 @@ public class LorryMapActivity extends Activity
 					double latitude = location.getLatitude();
 					double longitude = location.getLongitude();
 					LatLng latLng = new LatLng(latitude, longitude);
-					map.moveCamera(CameraUpdateFactory.newLatLng(latLng));	
-					map.moveCamera(CameraUpdateFactory.zoomBy(MAX_ZOOM));				
+					map.moveCamera(CameraUpdateFactory.newLatLng(latLng));				
 					postLocation(latitude, longitude, android_id, LORRY_TYPE);
 				}
 			});
@@ -147,8 +168,25 @@ public class LorryMapActivity extends Activity
 				if (nearByCyclists == null)
 					return;
 				
+				int numCyclists = nearByCyclists.size();
+				
+				
+				if (oldNumCyclists < numCyclists) 
+				{
+				
+					sounds.play(bikeBell, 2, 2, 1, 0, 1);	
+				}
+				
+				oldNumCyclists = numCyclists;
+				
+				
+				
+				// Clear map of cyclists
+				if (numCyclists == 0)
+					clearMapHandler.sendEmptyMessage(0);
+				
 				// Update map with nearby cyclists
-				for (int i = 0; i < nearByCyclists.size(); i++)
+				for (int i = 0; i < numCyclists; i++)
 				{
 					double latitude = nearByCyclists.get(i).getLatitude();
 					double longitude = nearByCyclists.get(i).getLongitude();
