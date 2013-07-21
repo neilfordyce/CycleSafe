@@ -4,6 +4,8 @@
     <string name="app_name">LorryClient</string>
     <string name="action_settings">Settings</string>
     <string name="hello_world">Hello world!</string>
-	<string name="getTrucking">LET\'S GET TRUUUUUCKKIIINNNGGG</string>
-	<string name="finishTrucking">ALL DONE TRUCKING</string>
+    <string name="getTrucking">LET\'S GET TRUUUUUCKKIIINNNGGG</string>
+    <string name="finishTrucking">ALL DONE TRUCKING</string>
+    <string name="title_activity_lorry_map">LorryMapActivity</string>
+
 </resources>

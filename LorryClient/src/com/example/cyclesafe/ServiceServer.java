@@ -6,6 +6,7 @@ import java.io.InputStreamReader;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Timer;
 
 
 import android.app.AlertDialog;
@@ -146,116 +147,116 @@ public class ServiceServer extends Service implements LocationListener
     return location;
     }
 	   
-	    /**
-	     * Stop using GPS listener
-	     * Calling this function will stop using GPS in your app
-	     * */
-	 
-	    public void stopUsingGPS()
-	    {
-	        if(locationManager != null)
-	        {
-	            locationManager.removeUpdates(ServiceServer.this);
-	        }       
-	    }
-	   
-	    /**
-	     * Function to get latitude
-	     * */
-	    public double getLatitude()
-	    {
-	        if(location != null)
-	        {
-	            latitude = location.getLatitude();
-	        }
-	       
-	        // return latitude
-	        return latitude;
-	    }
-	   
-	    /**
-	     * Function to get longitude
-	     * */
-	    public double getLongitude()
-	    {
-	        if(location != null)
-	        {
-	            longitude = location.getLongitude();
-	        }
-	       
-	        // return longitude
-	        return longitude;
-	    }
-	   
-	    /**
-	     * Function to check GPS/wifi enabled
-	     * @return boolean
-	     * */
-	    public boolean canGetLocation() 
-	    {
-	        return this.canGetLocation;
-	    }
-	   
-	    /**
-	     * Function to show settings alert dialog
-	     * On pressing Settings button will lauch Settings Options
-	     * */
-	    public void showSettingsAlert()
-	    {
-	        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
-	        
-	        // Setting Dialog Title
-	        alertDialog.setTitle("GPS is settings");
+    /**
+     * Stop using GPS listener
+     * Calling this function will stop using GPS in your app
+     * */
+ 
+    public void stopUsingGPS()
+    {
+        if(locationManager != null)
+        {
+            locationManager.removeUpdates(ServiceServer.this);
+        }       
+    }
+   
+    /**
+     * Function to get latitude
+     * */
+    public double getLatitude()
+    {
+        if(location != null)
+        {
+            latitude = location.getLatitude();
+        }
+       
+        // return latitude
+        return latitude;
+    }
+   
+    /**
+     * Function to get longitude
+     * */
+    public double getLongitude()
+    {
+        if(location != null)
+        {
+            longitude = location.getLongitude();
+        }
+       
+        // return longitude
+        return longitude;
+    }
+   
+    /**
+     * Function to check GPS/wifi enabled
+     * @return boolean
+     * */
+    public boolean canGetLocation() 
+    {
+        return this.canGetLocation;
+    }
+   
+    /**
+     * Function to show settings alert dialog
+     * On pressing Settings button will lauch Settings Options
+     * */
+    public void showSettingsAlert()
+    {
+        AlertDialog.Builder alertDialog = new AlertDialog.Builder(mContext);
+        
+        // Setting Dialog Title
+        alertDialog.setTitle("GPS is settings");
 
-	        // Setting Dialog Message
-	        alertDialog.setMessage("GPS is not enabled. Do you want to enable it now?");
+        // Setting Dialog Message
+        alertDialog.setMessage("GPS is not enabled. Do you want to enable it now?");
 
-	        // On pressing Settings button
-	        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() 
-	        {
-	            public void onClick(DialogInterface dialog,int which) 
-	            {
-	                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-	                mContext.startActivity(intent);
-	            }
-	        });
+        // On pressing Settings button
+        alertDialog.setPositiveButton("Settings", new DialogInterface.OnClickListener() 
+        {
+            public void onClick(DialogInterface dialog,int which) 
+            {
+                Intent intent = new Intent(Settings.ACTION_LOCATION_SOURCE_SETTINGS);
+                mContext.startActivity(intent);
+            }
+        });
 
-	        // on pressing cancel button
-	        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() 
-	        {
-	            public void onClick(DialogInterface dialog, int which) 
-	            {
-	            dialog.cancel();
-	            }
-	        });
+        // on pressing cancel button
+        alertDialog.setNegativeButton("Cancel", new DialogInterface.OnClickListener() 
+        {
+            public void onClick(DialogInterface dialog, int which) 
+            {
+            dialog.cancel();
+            }
+        });
 
-	        // Showing Alert Message
-	        alertDialog.show();
-	    }
+        // Showing Alert Message
+        alertDialog.show();
+    }
 
-	    @Override
-	    public void onLocationChanged(Location location) 
-	    {
-	    	latitude = location.getLatitude();
-	    	longitude = location.getLongitude();
-	    	toastLocation();
-	    	postLocation(latitude, longitude, 1234, LORRY_TYPE);
-	    }
+    @Override
+    public void onLocationChanged(Location location) 
+    {
+    	latitude = location.getLatitude();
+    	longitude = location.getLongitude();
+    	toastLocation();
+    	postLocation(latitude, longitude, 1234, LORRY_TYPE);
+    }
 
-	    @Override
-	    public void onProviderDisabled(String provider) 
-	    {
-	    }
+    @Override
+    public void onProviderDisabled(String provider) 
+    {
+    }
 
-	    @Override
-	    public void onProviderEnabled(String provider) 
-	    {
-	    }
+    @Override
+    public void onProviderEnabled(String provider) 
+    {
+    }
 
-	    @Override
-	    public void onStatusChanged(String provider, int status, Bundle extras) 
-	    {
-	    }
+    @Override
+    public void onStatusChanged(String provider, int status, Bundle extras) 
+    {
+    }
 
 
 	public void onCreate() 
