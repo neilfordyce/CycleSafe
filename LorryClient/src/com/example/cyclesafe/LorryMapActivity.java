@@ -96,16 +96,21 @@ public class LorryMapActivity extends Activity
 					double longitude = (Double) cyclistData.get("longitude");
 					double distance = (Double) cyclistData.get("distance");
 					
+					
 					map.addMarker(new MarkerOptions()
 			        .position(new LatLng(latitude, longitude))
 			        .title("Distance: " + distance));
+					
+					
 				}
 
 			};
 			
-			//Location initialLocation = map.getMyLocation();
-			
-			postLocation(51.504658, -0.024534, android_id, LORRY_TYPE);
+			Location initialLocation = map.getMyLocation();
+			if(initialLocation != null)
+			{
+			    postLocation(initialLocation.getLatitude(), initialLocation.getLongitude(), android_id, LORRY_TYPE);
+			}
 			map.setOnMyLocationChangeListener(new GoogleMap.OnMyLocationChangeListener() 
 			{
 				@Override
